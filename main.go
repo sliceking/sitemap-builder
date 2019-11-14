@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	urlFlag := flag.String("url", "https://stanwielga.com", "the url you want to build a sitemap for")
+	urlFlag := flag.String("url", "https://gophercises.com", "the url you want to build a sitemap for")
 	flag.Parse()
 
 	resp, err := http.Get(*urlFlag)
@@ -41,12 +41,16 @@ func main() {
 	for _, href := range hrefs {
 		fmt.Println(href)
 	}
-	/*
-		get the webpage
-		parse all the links on the page
-		build proper urls with our links
-		filter out any links with a different domain
-		find all pages BFS
-		print out XML
-	*/
+}
+
+func get() {
+
+}
+
+func hrefs() {
+
+}
+
+func filter() {
+
 }
