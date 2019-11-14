@@ -2,9 +2,12 @@ package main
 
 import (
 	"flag"
-	"io"
+	"fmt"
 	"net/http"
-	"os"
+	"net/url"
+	"strings"
+
+	"github.com/svwielga4/link-parser"
 )
 
 func main() {
@@ -16,7 +19,28 @@ func main() {
 		panic(err)
 	}
 	defer resp.Body.Close()
-	io.Copy(os.Stdout, resp.Body)
+
+	reqURL := resp.Request.URL
+	baseURL := &url.URL{
+		Scheme: reqURL.Scheme,
+		Host:   reqURL.Host,
+	}
+	base := baseURL.String()
+
+	links, _ := link.Parse(resp.Body)
+	var hrefs []string
+	for _, l := range links {
+		switch {
+		case strings.HasPrefix(l.Href, "/"):
+			hrefs = append(hrefs, base+l.Href)
+		case strings.HasPrefix(l.Href, "http"):
+			hrefs = append(hrefs, l.Href)
+		}
+	}
+
+	for _, href := range hrefs {
+		fmt.Println(href)
+	}
 	/*
 		get the webpage
 		parse all the links on the page
