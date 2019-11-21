@@ -15,7 +15,14 @@ func main() {
 	urlFlag := flag.String("url", "https://gophercises.com", "the url you want to build a sitemap for")
 	flag.Parse()
 
-	resp, err := http.Get(*urlFlag)
+	pages := get(*urlFlag)
+	for _, href := range pages {
+		fmt.Println(href)
+	}
+}
+
+func get(urlStr string) []string {
+	resp, err := http.Get(urlStr)
 	if err != nil {
 		panic(err)
 	}
@@ -27,15 +34,7 @@ func main() {
 		Host:   reqURL.Host,
 	}
 	base := baseURL.String()
-
-	pages := hrefs(resp.Body, base)
-	for _, href := range pages {
-		fmt.Println(href)
-	}
-}
-
-func get() {
-
+	return filter(hrefs(resp.Body, base), withPrefix(base))
 }
 
 func hrefs(body io.Reader, base string) []string {
@@ -52,6 +51,18 @@ func hrefs(body io.Reader, base string) []string {
 	return ret
 }
 
-func filter() {
+func filter(links []string, keepFn func(string) bool) []string {
+	var ret []string
+	for _, link := range links {
+		if keepFn(link) {
+			ret = append(ret, link)
+		}
+	}
+	return ret
+}
 
+func withPrefix(pfx string) func(string) bool {
+	return func(link string) bool {
+		return strings.HasPrefix(link, pfx)
+	}
 }
