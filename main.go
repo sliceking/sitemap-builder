@@ -23,7 +23,15 @@ func main() {
 }
 
 func bfs(urlStr string, depth int) []string {
+	seen := make(map[string]struct{})
+	var q map[string]struct{}
+	nq := map[string]struct{}{
+		urlStr: struct{}{},
+	}
+	for i := 0; i <= depth; i++ {
+		q, nq = nq, make(map[string]struct{})
 
+	}
 	var ret []string
 	return ret
 }
