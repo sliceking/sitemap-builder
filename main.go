@@ -23,16 +23,36 @@ func main() {
 }
 
 func bfs(urlStr string, depth int) []string {
+	// create a map string:empty struct to track what we've seen
 	seen := make(map[string]struct{})
+	// make a similar map for our queue of pages
 	var q map[string]struct{}
+	// and another one for our 'next queue' starting with the base
 	nq := map[string]struct{}{
 		urlStr: struct{}{},
 	}
+	// loop through however deep you want the bfs to go
 	for i := 0; i <= depth; i++ {
+		// make the current queue the next queue, and the next queue a new queue
 		q, nq = nq, make(map[string]struct{})
-
+		for page := range q {
+			// if its already seen, skip
+			if _, ok := seen[page]; ok {
+				continue
+			}
+			// mark it as seen
+			seen[page] = struct{}{}
+			// get all the links off of that page and put them into the next queue
+			for _, link := range get(page) {
+				nq[link] = struct{}{}
+			}
+		}
 	}
 	var ret []string
+	// change the seen map into a slice
+	for k := range seen {
+		ret = append(ret, k)
+	}
 	return ret
 }
 
