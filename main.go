@@ -13,12 +13,19 @@ import (
 
 func main() {
 	urlFlag := flag.String("url", "https://gophercises.com", "the url you want to build a sitemap for")
+	depthFlag := flag.Int("depth", 3, "the depth you want the bfs to search for links")
 	flag.Parse()
-
-	pages := get(*urlFlag)
+	pages := bfs(*urlFlag, *depthFlag)
+	// pages := get(*urlFlag)
 	for _, href := range pages {
 		fmt.Println(href)
 	}
+}
+
+func bfs(urlStr string, depth int) []string {
+
+	var ret []string
+	return ret
 }
 
 func get(urlStr string) []string {
