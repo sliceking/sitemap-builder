@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -11,15 +10,20 @@ import (
 	"github.com/svwielga4/link-parser"
 )
 
+type loc struct {
+	Value string `xml:"loc"`
+}
+type urlset struct {
+	Urls []loc `xml:"url"`
+}
+
 func main() {
 	urlFlag := flag.String("url", "https://gophercises.com", "the url you want to build a sitemap for")
 	depthFlag := flag.Int("depth", 3, "the depth you want the bfs to search for links")
 	flag.Parse()
 	pages := bfs(*urlFlag, *depthFlag)
 	// pages := get(*urlFlag)
-	for _, href := range pages {
-		fmt.Println(href)
-	}
+	toXML := urlset{}
 }
 
 func bfs(urlStr string, depth int) []string {

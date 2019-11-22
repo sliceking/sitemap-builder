@@ -1,5 +1,5 @@
 # sitemap-builder
 
-get yourself a sitemap
+get yourself an xml sitemap
 
-    go run main.go -url stanwielga.com
+    go run main.go -url stanwielga.com -depth 3 > site.xml
