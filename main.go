@@ -1,29 +1,47 @@
 package main
 
 import (
+	"encoding/xml"
 	"flag"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 
 	"github.com/svwielga4/link-parser"
 )
 
+const xmlns = "http://www.sitemaps.org/schemas/sitemap/0.9"
+
 type loc struct {
 	Value string `xml:"loc"`
 }
 type urlset struct {
-	Urls []loc `xml:"url"`
+	Urls  []loc  `xml:"url"`
+	Xmlns string `xml:"xmlns,attr"`
 }
 
 func main() {
 	urlFlag := flag.String("url", "https://gophercises.com", "the url you want to build a sitemap for")
 	depthFlag := flag.Int("depth", 3, "the depth you want the bfs to search for links")
 	flag.Parse()
+
 	pages := bfs(*urlFlag, *depthFlag)
-	// pages := get(*urlFlag)
-	toXML := urlset{}
+	toXML := urlset{
+		Xmlns: xmlns,
+	}
+
+	for _, page := range pages {
+		toXML.Urls = append(toXML.Urls, loc{page})
+	}
+	fmt.Print(xml.Header)
+	enc := xml.NewEncoder(os.Stdout)
+	enc.Indent("", "  ")
+	if err := enc.Encode(toXML); err != nil {
+		panic(err)
+	}
 }
 
 func bfs(urlStr string, depth int) []string {
